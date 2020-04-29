@@ -5,7 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
-const md5 = require('md5');
+const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
 firebaseAdmin.initializeApp({
@@ -62,9 +62,10 @@ app.get('/register', (req, res) => {
 
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
-  const user = new User(email, md5(password));
 
   try {
+    const user = new User(email, password);
+    user.password = await bcrypt.hash(password, 10);
     const docRef = db.collection(collectionRef).doc();
     const doc = await docRef.set(user);
     if (doc) {
@@ -84,19 +85,28 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
-    const query = db
-      .collection(collectionRef)
-      .where('email', '==', email)
-      .where('password', '==', md5(password));
-    const result = await query.get();
+    const query = db.collection(collectionRef).where('email', '==', email);
+    const found = await query.get();
+    let realPassword = null;
 
-    if (result) {
-      return res.status(200).render('home', {
-        pageTitle: 'Home',
-        headerTitle: 'Home',
-        copyrightYear,
+    if (found) {
+      found.forEach((user) => {
+        realPassword = user.data().password;
       });
+
+      if (realPassword !== null) {
+        const verify = await bcrypt.compare(password.toString(), realPassword);
+
+        if (verify) {
+          return res.status(200).render('home', {
+            pageTitle: 'Home',
+            headerTitle: 'Home',
+            copyrightYear,
+          });
+        }
+      }
     }
+
     return res.status(404).sendFile(path.join(__dirname, '../public/404.html'));
   } catch (error) {
     console.error(error.message);
