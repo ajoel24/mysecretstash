@@ -5,6 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+const md5 = require('md5');
 const User = require('../models/User');
 
 firebaseAdmin.initializeApp({
@@ -61,12 +62,12 @@ app.get('/register', (req, res) => {
 
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
-  const user = new User(email, password);
+  const user = new User(email, md5(password));
 
   try {
     const docRef = db.collection(collectionRef).doc();
     const doc = await docRef.set(user);
-    if (!doc) {
+    if (doc) {
       return res.render('registerSuccess', {
         pageTitle: 'Register Success',
         headerTitle: 'Register success',
@@ -86,7 +87,7 @@ app.post('/login', async (req, res) => {
     const query = db
       .collection(collectionRef)
       .where('email', '==', email)
-      .where('password', '==', password);
+      .where('password', '==', md5(password));
     const result = await query.get();
 
     if (result) {
