@@ -1,0 +1,27 @@
+<%- include('./partials/head') %>
+<body>
+    <%- include('./partials/header') %>
+    <section class="container">
+        <form method="POST" action="/register">
+            <div class="row">
+                <div class="six columns">
+                <label for="email">Your Email</label>
+                <input class="u-full-width" type="email" placeholder="Enter your email" name="email" maxlength="30"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="six columns">
+                <label for="password">Your Password</label>
+                <input class="u-full-width" type="password" placeholder="Enter your password" name="password" maxlength="20"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="six columns">
+                    <button class="button-primary" type="submit">Register</button>
+                </div>
+            </div>
+        </form>
+    </section>
+    <%- include('./partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<%- include('./partials/head') %>
+<body>
+  <%- include('./partials/header') %>
+  <main class="container">
+    <section class="row">
+      <div class="ten columns">
+        <h1>Home</h1>
+      </div>
+    </section>
+    <section class="row">
+      <div class="ten columns">
+        <h3>Share your secrets anonymously</h3>
+      </div>
+    </section>
+    <section class="row">
+      <div class="six columns">
+        <a href="/login">
+          <button class="button-primary">Login</button>
+        </a>
+      </div>
+      <div class="six columns">
+        <a href="/register">
+          <button class="button">Register</button>
+        </a>
+      </div>
+    </section>
+  </main>
+  <%- include('./partials/footer.ejs') %>
+</body>
+</html>
